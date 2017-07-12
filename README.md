@@ -75,12 +75,12 @@ The body of actor usually defines a DSL to manage the state machine. There's one
 ## User Repository's FSM implementation
   
   The FSM implementation of UserRepository actor supports following states 
-  * Disconnected - Initial state of the FSM actor.
-  * Connected
+  * _Disconnected_ - Initial state of the FSM actor.
+  * _Connected_
   
   State data supported by user repository FSM are
-  * EmptyData - Associated with Disconnected state.
-  * SystemStatus - Associated with Connected state.
+  * _EmptyData_ - Associated with Disconnected state.
+  * _SystemStatus_ - Associated with Connected state.
   
   The diagram below depicts the functionality of User repository FSM actor
   
