@@ -72,7 +72,6 @@ class UserRepositoryFSM extends FSM[FSMState, FSMStateData] with Stash {
       goto(Disconnected) using EmptyData
     case Event(Operation(dbOperation, user), SystemStatus(attribute)) =>
       logger debug s"Performing database operation $dbOperation for $user..."
-      //logger debug s"Connection with database was established at $attribute"
       stay using SystemStatus(attribute)
   }
 

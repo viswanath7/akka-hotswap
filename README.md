@@ -11,6 +11,8 @@ The hot-swapped code (i.e. new behaviour placed via become) is kept internally i
 * **popped** using `unbecome`. In this case, the actor will revert to its original behaviour. One must ensure that the number of pop operations (i.e. unbecome) matches the number of “push” operations in the long run; otherwise it'd amount to memory leak. 
 * **pushed** again using `become`; which will essentially once again replace the current behavior (i.e. the top of the behavior stack).
 
+Become and unbecome pair approach is the recommended when the application needs to handle only two states.
+
 ### Stash
 
 `Trait` that enables an actor to temporarily stash away messages, that should not be handled using the actor’s current message handling behaviour.
@@ -26,6 +28,8 @@ Typically, when making a state transition via `become` or `unbecome` method call
     * The stash is guaranteed to be empty after calling `unstashAll()`.
 
 ## Switch application
+
+![Switch logic](docs/switch.jpg)
 
 The `Switch` actor showcases hot-swapping behaviour via `become` and `unbecome`. 
 The actor supports two states namely **OFF** and **ON** where OFF is the initial state. It implements two method handlers for behaviour of the application in those two states.
@@ -52,3 +56,32 @@ Change of behaviour is triggered using `become` and `unbecome` pair i.e. through
 
 Objective 2: Finite state machine
 ================================================================
+
+A Finite State Machine (FSM) can be described as a set of relationship of the following form.
+
+> If the application is in _state_ **_S_** and an _event_ **_E_** occurs, it must performs _action_ **_A_** and make a transition to _state_ **_S'_**. 
+
+![Finite state machine](docs/FSM.png)
+
+The recommended best practise is to use a FSM when the application needs to handle more than two states. 
+
+Akka provides a `FSM` actor trait that requires two type parameters for 
+ * _States managed_ by the finite state machine - Typically a sealed trait serving as super type of all supported states, is specified in the type parameter.
+ * _State data_ tracked by FSM module - Typically a sealed trait serving as super type of all supported state's data, is specified in the type parameter.
+
+The body of actor usually defines a DSL to manage the state machine. There's one declaration of event handler per supported state, called state function.
+  A state function is a partial function that accepts an event (containing a message and FSM actor) and returns its state. 
+  
+## User Repository's FSM implementation
+  
+  The FSM implementation of UserRepository actor supports following states 
+  * Disconnected - Initial state of the FSM actor.
+  * Connected
+  
+  State data supported by user repository FSM are
+  * EmptyData - Associated with Disconnected state.
+  * SystemStatus - Associated with Connected state.
+  
+  The diagram below depicts the functionality of User repository FSM actor
+  
+  ![User repository FSM](docs/user-repository-fsm.png)
